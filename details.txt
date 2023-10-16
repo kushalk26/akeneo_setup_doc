@@ -1,0 +1,104 @@
+==================================
+
+Akeneo installation steps:
+
+Compatible
+Ubuntu20, php 8, elastic search 7, mysql 8
+
+1. Setup apache2
+2. Setup php 8
+3. setup mysql and created the user and database
+4. setup elastic search
+5. Setup akeneo zip --- composer create-project akeneo/pim-community-standard /srv/pim "6.0.*@stable"
+6. Setup env db name, hostname, drivername, mysql hostname, elastic search name etc.
+7. Last command to run everything is inside one command(NO_DOCKER=true make dev).
+
+
+
+
+Some important part of akeneo setup while Sayedt project.
+
+=====
+
+DATABASE akeneo_pim
+user akeneo_pim1
+pass Akeneo_pim@123
+
+CREATE USER akeneo_pim1@localhost IDENTIFIED WITH mysql_native_password BY 'Akeneo_pim@123';
+
+GRANT ALL PRIVILEGES ON akeneo_pim.* TO akeneo_pim1@localhost;
+
+
+sudo apt install php8.0-apcu
+sudo apt install php8.0-bcmath
+sudo apt install php8.0-curl
+sudo apt install php8.0-fpm
+sudo apt install php8.0-intl
+sudo apt install php8.0-mysql
+sudo apt install php8.0-xml
+sudo apt install php8.0-zip
+sudo apt install php8.0-exif
+sudo apt install php8.0-imagick
+sudo apt install php8.0-cli
+sudo apt install php8.0-opcache
+sudo apt install php8.0-gd
+sudo apt install php8.0-mbstring
+sudo apt install php8.0-memcached
+sudo apt install php8.0-mbstring
+
+
+
+
+DATABASE akeneo_pim
+user akeneo_pim1
+pass Akeneo_pim@123
+
+
+ "doctrine:database:create --if-not-exists=1 --no-debug=1 --env=prod". Message: "An exception occurred in driver: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Temporary failure in name resolution" ["exception" => Doctrine\DBAL\Exception\ConnectionException^ { …},"command" => "doctrine:database:create --if-not-exists=1 --no-debug=1 --env=prod","message" => "An exception occurred in driver: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Temporary failure in name resolution"]
+
+
+
+php bin/console pim:installer:db --env=prod --catalog=/var/www/akeneo/vendor/akeneo/pim-community-dev/src/Akeneo/Platform/Bundle/InstallerBundle/Resources/fixtures/minimal
+
+
+php bin/console pim:user:create username akeneo pass akeneo phpkbiz@gmail.com first last en_US -n --env=prod
+
+php bin/console pim:user:create username akeneo pass akeneo en_US -n --env=prod
+
+
+php bin/console pim:user:create username akeneo pass akeneo phpkbiz@gmail.com first last en_US -n --env=prod
+
+
+php bin/console pim:user:create akeneo akeneo contact@email.co.uk first last en_US -n --env=prod
+
+
+php bin/console pim:installer:db --env=dev --catalog=/var/www/akeneo/vendor/akeneo/pim-community-dev/src/Akeneo/Platform/Bundle/InstallerBundle/Resources/fixtures/icecat_demo_dev
+
+yarn --cwd=/var/www/akeneo/vendor/akeneo/pim-community-dev/akeneo-design-system install --frozen-lockfile
+yarn --cwd=/var/www/akeneo/vendor/akeneo/pim-community-dev/akeneo-design-system run lib:build
+
+restart mysql
+sudo /etc/init.d/mysql start
+
+elastic search start
+
+sudo systemctl start elasticsearch
+
+sudo systemctl enable elasticsearch
+
+systemctl status elasticsearch.service
+
+curl -X GET 'http://localhost:9200'
+
+curl -i http://localhost:9200/_cluster/health
+
+php bin/console cache:clear --env=prod;
+
+chmod -R 777 /var/www/akeneo/var/cache/
+
+service apache2 restart
+
+
+https://github.com/akeneo/pim-community-dev/issues/15016
+
+
